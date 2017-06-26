@@ -50,8 +50,11 @@
       // displaypokemonInfo function re-renders the HTML to display the appropriate content
       function displaypokemonInfo() {
 
+        //clear screen first
+        $('#pokemons-view').empty();
+        //initializing
         var pokemon = $(this).attr("data-name");
-        var queryURL = `http://api.giphy.com/v1/gifs/search?q=${pokemon}&api_key=dc6zaTOxFJmzC&limit=10`;
+        var queryURL = `https://api.giphy.com/v1/gifs/search?q=${pokemon}&api_key=dc6zaTOxFJmzC&limit=10`;
 
         // Creates AJAX call for the specific pokemon button being clicked
         $.ajax({
@@ -80,12 +83,9 @@
 
       // Function for displaying pokemon data
       function renderButtons() {
-
         $("#buttons-view").empty();
-
         // Loops through the array of pokemons
         for (var i = 0; i < topics.length; i++) {
-
           // Then dynamicaly generates buttons for each pokemon in the array
           var a = $("<button>");
           // Adds a class of pokemon to our button
@@ -119,11 +119,12 @@
       // Calling the renderButtons function to display the intial buttons
       renderButtons();
 
+      //image toggle logic
       $(document).on('click', ".images", function(){
         if ($(this).attr('state') === 'still') {
-          $(this).attr({src: $(this).attr('data-animate'), 'data-state': 'animate'});
+          $(this).attr({src: $(this).attr('data-animate'), 'state': 'animate'});
         } else {
-         $(this).attr({src: $(this).attr('data-still'), 'data-state': 'still'});
+         $(this).attr({src: $(this).attr('data-still'), 'state': 'still'});
         }
       })
     </script>
