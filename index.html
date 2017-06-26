@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Pokemon Frentic!</title>
+  <style type="text/css">
+    button,
+    div,
+    form,
+    input {
+      margin: 10px;
+    }
+
+    img {
+      height: 200px;
+    }
+
+    .pokemonDIV {
+      float: left;
+    }
+  
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Pokemon Search</h1>
+
+    <!-- Rendered buttons will get dumped Here  -->
+    <div id="buttons-view"></div>
+
+    <form id="pokemon-form">
+      <label for="pokemon-input">Add a pokemon</label>
+      <input type="text" id="pokemon-input"><br>
+
+      <!-- Button triggers new pokemon to be added -->
+      <input id="add-pokemon" type="submit" value="Add a pokemon">
+    </form>
+
+    <!-- pokemons will get dumped here -->
+    <div id="pokemons-view"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      // Initial array of pokemons
+      var topics = ["Pikachu", "Bulbasaur", "Charmeleon", "Caterpie", "Jigglypuff", "Snorlax", "Magikarp", "Squirtle", "Psyduck", "Meowth"];
+
+      // displaypokemonInfo function re-renders the HTML to display the appropriate content
+      function displaypokemonInfo() {
+
+        var pokemon = $(this).attr("data-name");
+        var queryURL = `http://api.giphy.com/v1/gifs/search?q=${pokemon}&api_key=dc6zaTOxFJmzC&limit=10`;
+
+        // Creates AJAX call for the specific pokemon button being clicked
+        $.ajax({
+          url: queryURL,
+          method: "GET"
+        }).done(function(res) {
+          res.data.forEach( (v)=> {
+            console.log(v)
+          var pokemonDiv = $("<div>");
+          pokemonDiv.addClass('pokemonDIV');
+          var pokemonIMG = $("<img>");
+          pokemonIMG.addClass('images');
+          pokemonIMG.attr({
+            'state': 'still',
+            'src': v.images.original_still.url, 
+            'data-still': v.images.original_still.url,
+            'data-animate': v.images.original.url
+          })
+          pokemonDiv.append($(`<p>Rated: ${v.rating}</p>`));
+          pokemonDiv.append(pokemonIMG); 
+          $('#pokemons-view').append(pokemonDiv);
+          })
+        });
+
+      }
+
+      // Function for displaying pokemon data
+      function renderButtons() {
+
+        $("#buttons-view").empty();
+
+        // Loops through the array of pokemons
+        for (var i = 0; i < topics.length; i++) {
+
+          // Then dynamicaly generates buttons for each pokemon in the array
+          var a = $("<button>");
+          // Adds a class of pokemon to our button
+          a.addClass("pokemonBTN");
+          // Added a data-attribute
+          a.attr("data-name", topics[i]);
+          // Provided the initial button text
+          a.text(topics[i]);
+          // Added the button to the buttons-view div
+          $("#buttons-view").append(a);
+        }
+      }
+
+      // This function handles events where the add pokemon button is clicked
+      $("#add-pokemon").on("click", function(event) {
+        event.preventDefault();
+        // This line of code will grab the input from the textbox
+        var pokemon = $("#pokemon-input").val().trim();
+
+        // The pokemon from the textbox is then added to our array
+        topics.push(pokemon);
+
+        // Calling renderButtons which handles the processing of our pokemon array
+        renderButtons();
+
+      });
+
+      // Adding click event listeners to all elements with a class of "pokemon"
+      $(document).on("click", ".pokemonBTN", displaypokemonInfo);
+
+      // Calling the renderButtons function to display the intial buttons
+      renderButtons();
+
+      $(document).on('click', ".images", function(){
+        if ($(this).attr('state') === 'still') {
+          $(this).attr({src: $(this).attr('data-animate'), 'data-state': 'animate'});
+        } else {
+         $(this).attr({src: $(this).attr('data-still'), 'data-state': 'still'});
+        }
+      })
+    </script>
+  </div>
+</body>
+
+</html>
